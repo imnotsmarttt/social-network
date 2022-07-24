@@ -8,7 +8,7 @@
 <div class="container">
 
 <div class="form-group">
-    <form class="w-50 m-auto mt-5" method="post">
+    <form class="w-50 m-auto mt-5" method="post" enctype="multipart/form-data">
         <h1>Вход</h1>
         {% csrf_token %}
         {% for field in form %}
@@ -17,10 +17,9 @@
                 <label for="floatingInput">{{ field.label }}</label>
             </div>
         {% endfor %}
-
-        <button type="submit" class="btn btn-dark mt-2">Войти</button>
-    <p class="text-center">Нет аккаунта?
-            <a href="{% url 'register' %}" class="link">Зарегистрироваться</a>
+        <button type="submit" class="btn btn-dark mt-2">Регистрация</button>
+        <p class="text-center">Есть аккаунт?
+            <a href="{% url 'login' %}" class="link">Войти</a>
         </p>
     </form>
 </div>
