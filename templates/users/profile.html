@@ -68,15 +68,17 @@
                         {{ user.email }}
                     </div>
                   </div>
+                {% if user.phone %}
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
                       <h6 class="mb-0">Телефон</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                      (320) 380-4539
+                      {{ user.phone }}
                     </div>
                   </div>
+                {% endif %}
                   <hr>
                   <div class="row">
                     <div class="col-sm-3">
@@ -86,12 +88,25 @@
                       {{ user.country }}, {{ user.city }}
                     </div>
                   </div>
+                {% if user.about_me %}
+                <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Про меня</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ user.about_me }}
+                    </div>
+                  </div>
+                {% endif %}
+                    {% if request.user == user %}
                   <hr>
                   <div class="row">
                     <div class="col-sm-12">
                       <a class="btn btn-dark" target="__blank" href="{% url 'profile_update' slug=request.user.slug %}">Настройки профиля</a>
                     </div>
                   </div>
+                    {% endif %}
                 </div>
               </div>
 

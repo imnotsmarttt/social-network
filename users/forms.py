@@ -79,7 +79,7 @@ class UserUpdateCustomForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'city', 'country']
+        fields = ['first_name', 'last_name', 'username', 'email', 'city', 'country', 'phone', 'about_me']
         labels = {
             'first_name': 'Имя',
             'last_name': 'Фамилия',
@@ -87,6 +87,8 @@ class UserUpdateCustomForm(UserChangeForm):
             'email': 'Email',
             'city': 'Город',
             'country': 'Страна',
+            'about_me': 'Про себя',
+            'phone': 'Номер телефона',
         }
 
         widgets = {
@@ -106,6 +108,13 @@ class UserUpdateCustomForm(UserChangeForm):
                 'class': 'form-control', 'id': 'floatingInput'
             }),
             'city': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'floatingInput'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control', 'id': 'floatingInput'
+            }),
+
+            'about_me': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'floatingInput'
             }),
         }

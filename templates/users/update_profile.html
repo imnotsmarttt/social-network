@@ -36,7 +36,12 @@
 								</div>
 								<div class="col-sm-9 text-secondary">
 									{{ field }}
+                                    {% if field.errors %}
+                                         {{ field.errors }}
+                                    {% endif %}
 								</div>
+
+
 							</div>
                             {% endfor %}
 

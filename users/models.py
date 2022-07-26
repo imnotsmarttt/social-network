@@ -9,6 +9,7 @@ class CustomUser(AbstractUser):
     about_me = models.TextField(verbose_name='About User', null=True, blank=True)
     city = models.CharField(max_length=255, verbose_name='City', null=True)
     country = models.CharField(max_length=255, verbose_name='Country', null=True)
+    phone = models.CharField(max_length=25, blank=True, null=True, verbose_name='Phone number')
 
     class Meta:
         db_table = 'CustomUser'
