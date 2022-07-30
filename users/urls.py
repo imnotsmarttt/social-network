@@ -1,5 +1,6 @@
-from django.urls import path, reverse_lazy
+from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.staticfiles.urls import static, settings
 
 from . import views
 from .forms import UserLoginForm
@@ -14,4 +15,4 @@ urlpatterns = [
     path('<slug:slug>/change/', views.UserProfileUpdate.as_view(), name='profile_update'),
 ]
 
-
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

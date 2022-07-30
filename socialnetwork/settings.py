@@ -38,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'newsfeed.apps.NewsfeedConfig',
+    'mptt',
+
+    'posts.apps.PostsConfig',
     'users.apps.UsersConfig',
+    'comments.apps.CommentsConfig',
 ]
 
 MIDDLEWARE = [

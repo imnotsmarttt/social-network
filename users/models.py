@@ -5,7 +5,8 @@ from django.contrib.auth.models import AbstractUser
 class CustomUser(AbstractUser):
     """Extended user model"""
     slug = models.SlugField(db_index=True, unique=True, null=True)
-    avatar = models.ImageField(upload_to='user_avatar/', verbose_name='User image', null=True, blank=True)
+    avatar = models.ImageField(upload_to='user_avatar/', verbose_name='User image', null=True, blank=True,
+                               default='user_avatar/blank-profile-picture.png')
     about_me = models.TextField(verbose_name='About User', null=True, blank=True)
     city = models.CharField(max_length=255, verbose_name='City', null=True)
     country = models.CharField(max_length=255, verbose_name='Country', null=True)

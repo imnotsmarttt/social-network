@@ -113,8 +113,7 @@ class UserUpdateCustomForm(UserChangeForm):
             'phone': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'floatingInput'
             }),
-
-            'about_me': forms.TextInput(attrs={
+            'about_me': forms.Textarea(attrs={
                 'class': 'form-control', 'id': 'floatingInput'
             }),
         }
