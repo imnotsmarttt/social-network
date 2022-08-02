@@ -35,13 +35,9 @@ def post_like(request):
     action = request.POST.get('action')
     print(action)
     if post_id and action:
-        try:
-            post = Post.objects.get(id=post_id)
-            if action == 'like':
-                PostLike.objects.create(user=request.user, post=post)
-            elif action == 'unlike':
-                PostLike.objects.get(post=post, user=request.user).delete()
-                return JsonResponse({'status':'ok'})
-        except:
-            pass
+        post = Post.objects.get(id=post_id)
+        if action == 'like':
+            PostLike.objects.get_or_create(user=request.user, post=post)
+        elif action == 'unlike':
+            PostLike.objects.get(post=post, user=request.user).delete()
     return JsonResponse({'status':'ok'})

@@ -18,9 +18,15 @@
                             <img src="{% static user.avatar.url %}" alt="Admin" class="rounded-circle" width="150">
                         <div class="mt-3">
                         <h4>{{ user.first_name }} {{ user.last_name }}</h4>
-                        {#                      <p class="text-secondary mb-1">Full Stack Developer</p>#}
+                        <p id="followers" class="text-secondary mb-1">{{ user.contact_to.all.count }}</p>
                         <p class="text-muted font-size-sm">{{ user.country }}, {{ user.city }}</p>
-                        <button class="btn btn-dark">Подписка</button>
+                            
+                        <button id="add-contact-btn" 
+                            class="btn btn-dark" 
+                            data-action="{% if request.user.id in user_followers %}un{% endif %}follow"
+                            data-id="{{ user.id }}">
+                            {% if request.user.id in user_followers %}Отписаться{% else %}Подписаться{% endif %}
+                        </button>
                         <button class="btn btn-outline-dark">Сообщение</button>
 
                     </div>
@@ -208,9 +214,8 @@ $('.like').click(function() {
     var pk = $(this).data('id');
     $.ajax({
         type: "POST",
-        url: "/post/like/",
-        data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '6wC5NPfuXJYaNpf5Zx9RZah5tqD2QcQl1FhqRSGp7UhCV2nCfmSLPoJZPH3s0diF'},
-        dataType: "json",
+        url: "{% url 'post_like' %}",
+        data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
         success: function(response) {
             var previous_action = $('#like'+pk).data('action')
             
@@ -223,6 +228,30 @@ $('.like').click(function() {
 
             $('#total-likes'+pk).text(
                 previous_action == 'like' ? previous_likes + 1 : previous_likes - 1
+            );
+        }
+    });
+})
+
+
+$('#add-contact-btn').click(function() {
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'follow_to_user' %}",
+        data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success: function(response) {
+            var previous_action = $('#add-contact-btn').data('action')
+            
+            $('#add-contact-btn').data('action', previous_action == "follow" ? "unfollow": 'follow');
+
+            var previous_likes = parseInt($('#followers').text());
+
+            $('#add-contact-btn').text(
+                previous_action == 'follow' ? "Отписаться" : "Подписаться");
+
+            $('#followers').text(
+                previous_action == 'follow' ? previous_likes + 1 : previous_likes - 1
             );
         }
     });
