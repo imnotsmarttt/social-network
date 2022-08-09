@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 
 from .models import CustomUser
 
@@ -79,7 +79,7 @@ class UserUpdateCustomForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'city', 'country', 'phone', 'about_me']
+        fields = ['first_name', 'last_name', 'username', 'email', 'city', 'country', 'phone', 'about_me', 'avatar']
         labels = {
             'first_name': 'Имя',
             'last_name': 'Фамилия',
@@ -89,6 +89,7 @@ class UserUpdateCustomForm(UserChangeForm):
             'country': 'Страна',
             'about_me': 'Про себя',
             'phone': 'Номер телефона',
+            'avatar': 'Фото профиля'
         }
 
         widgets = {
@@ -117,3 +118,28 @@ class UserUpdateCustomForm(UserChangeForm):
                 'class': 'form-control', 'id': 'floatingInput'
             }),
         }
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    old_password = forms.CharField(
+        label="Старый пароль",
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'current-password', 'autofocus': True, 'class': 'form-control', 'id': 'floatingInput'
+        }),
+    )
+
+    new_password1 = forms.CharField(
+        label="Новый пароль",
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password', 'class': 'form-control', 'id': 'floatingInput'
+        }),
+        strip=False,
+    )
+    new_password2 = forms.CharField(
+        label="Подтвердите новый пароль",
+        strip=False,
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password', 'class': 'form-control', 'id': 'floatingInput'
+        }),
+    )

@@ -1,8 +1,10 @@
-from django.shortcuts import redirect, reverse
+import imp
+from django.shortcuts import redirect, render, reverse
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import CreateView, FormMixin
 from django.views.generic import DetailView, UpdateView
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 from .forms import UserRegisterForm, UserUpdateCustomForm
@@ -11,6 +13,7 @@ from .models import CustomUser
 from comments.forms import CommentCreateForm
 from comments.models import CommentModel
 from posts.models import Post
+from contacts.models import Contact
 
 
 class UserRegisterView(CreateView):
@@ -63,7 +66,7 @@ class UserProfileView(DetailView, FormMixin):
         return HttpResponseRedirect(reverse('profile', kwargs={'slug': comment.user.slug}))
 
 
-class UserProfileUpdate(UpdateView):
+class UserProfileUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'users/update_profile.html'
     form_class = UserUpdateCustomForm
     model = CustomUser

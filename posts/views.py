@@ -9,10 +9,6 @@ from .forms import CreatePostForm
 from .models import PostLike, Post
 
 
-def index(request):
-    return render(request, 'base.html')
-
-
 class PostCreateView(CreateView, LoginRequiredMixin):
     """Create post view"""
     form_class = CreatePostForm

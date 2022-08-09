@@ -16,10 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from dashboard import views as ds_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
+    path('', ds_views.DashboardFeed.as_view(), name='home_page'),
+    path('', include('dashboard.urls', namespace='dashboard')),
     path('post/', include('posts.urls')),
     path('users/', include('users.urls')),
     path('contact/', include('contacts.urls')),
