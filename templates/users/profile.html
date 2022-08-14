@@ -28,7 +28,7 @@
                             data-id="{{ user.id }}">
                             {% if request.user.id in user_followers %}Отписаться{% else %}Подписаться{% endif %}
                         </button>
-                        <button class="btn btn-outline-dark">Сообщение</button>
+                        <a href="{% url 'chat_create' user_id=user.id %}" class="btn btn-outline-dark">Сообщение</a>
                         {% endif %}
 
                     </div>
@@ -209,6 +209,10 @@
 
 
 {% block javascript %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 <script>
 

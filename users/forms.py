@@ -69,9 +69,9 @@ class UserLoginForm(AuthenticationForm):
             'class': 'form-control', 'id': 'floatingPassword'}),
     )
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super(UserLoginForm, self).__init__(*args, **kwargs)
+    # def __init__(self, *args, **kwargs):
+    #     self.request = kwargs.pop('request', None)
+    #     super(UserLoginForm, self).__init__(*args, **kwargs)
 
 
 class UserUpdateCustomForm(UserChangeForm):

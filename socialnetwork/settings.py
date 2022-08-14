@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'comments.apps.CommentsConfig',
     'contacts.apps.ContactsConfig',
     'dashboard.apps.DashboardConfig',
+    'chat.apps.ChatConfig',
 ]
 
 MIDDLEWARE = [

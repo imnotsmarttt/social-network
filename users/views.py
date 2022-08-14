@@ -26,7 +26,7 @@ class UserRegisterView(CreateView):
         password = form.cleaned_data.get('password1')
         user = authenticate(username=username, password=password)
         login(self.request, user)
-        return redirect('index')
+        return HttpResponseRedirect(reverse('profile', kwargs={'slug': user.slug}))
 
 
 class UserProfileView(DetailView, FormMixin):
