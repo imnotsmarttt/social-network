@@ -12,7 +12,7 @@ class ChatList(ListView):
     context_object_name = 'chats'
 
     def get_queryset(self):
-        return Chat.objects.filter(members__in=[self.request.user]).annotate(c=Count('messages')).filter(c=1)
+        return Chat.objects.filter(members__in=[self.request.user]).annotate(c=Count('messages')).filter(c__gte=1)
 
 
 class MessagesView(View):
@@ -27,7 +27,7 @@ class MessagesView(View):
 
         context = {
             'chat': chat,
-            'chats': Chat.objects.filter(members__in=[request.user]).annotate(c=Count('messages')).filter(c=1),
+            'chats': Chat.objects.filter(members__in=[request.user]).annotate(c=Count('messages')).filter(c__gte=1),
             'form': MessageForm()}
         return render(
             request,
