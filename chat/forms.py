@@ -11,6 +11,6 @@ class MessageForm(forms.ModelForm):
 
         widgets = {
             'content': forms.TextInput(attrs={
-                'class': 'form-control', 'placeholder': 'Сообщение'
+                'class': '', 'placeholder': 'Сообщение', 'id': ''
             })
         }

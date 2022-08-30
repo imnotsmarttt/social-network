@@ -35,15 +35,6 @@ class MessagesView(View):
             context
         )
 
-    def post(self, request, chat_id):
-        form = MessageForm(data=request.POST)
-        if form.is_valid():
-            message = form.save(commit=False)
-            message.chat_id = chat_id
-            message.author = request.user
-            message.save()
-        return redirect(reverse('chat_messages', kwargs={'chat_id': chat_id}))
-
 
 class ChatCreate(View):
     def get(self, request, user_id):
@@ -56,6 +47,3 @@ class ChatCreate(View):
         else:
             chat = chats.first()
         return redirect(reverse('chat_messages', kwargs={'chat_id': chat.id}))
-
-
-

@@ -1,6 +1,6 @@
 {% extends '../base.html' %}
 
-{% block title %}Чат {{ chat.id }}{% endblock %}
+{% block title %}Чат {{ chat.id }} | {{ datetime }}{% endblock %}
 
 {% block head %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -58,10 +58,10 @@
 						</div>
 					</div>
 
-                    <div class="chat-messages p-4">
+                    <div class="chat-messages p-4" id="chat-messages">
 
                         {% for message in chat.messages.all %}
-							<div class="chat-message-{% if message.author == request.user %}right{% else %}left{% endif %} pb-4">
+							<div class="chat-message-{% if message.author == request.user %}right{% else %}left{% endif %} pb-4" >
 								<div>
 {#									<img src="https://bootdey.com/img/Content/avatar/avatar1.png" class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">#}
 {#									<div class="text-muted small text-nowrap mt-2">{{ message.created }}</div>#}
@@ -75,11 +75,10 @@
 						</div>
 
                         <div class="flex-grow-0 py-3 px-4 border-top">
-                            <form class="input-group" method="post">
-                                {% csrf_token %}
-                                {{ form }}
-                                <button class="btn btn-primary">Send</button>
-                            </form>
+                            <div class="input-group">
+                                <input class="form-control" type="text" id="message-input" placeholder="Сообщение">
+                                <button class="btn btn-primary" id="chat-message-submit">Send</button>
+                            </div>
 				        </div>
 
 					</div>
@@ -137,8 +136,89 @@
     border-top: 1px solid #dee2e6!important;
 }
 </style>
+    {{ chat.id|json_script:"json-chatid" }}
+    {{ request.user.id|json_script:"json-userid" }}
+
 
 <script type="text/javascript">
+    function scrollToBottom() {
+        let objDiv = document.getElementById("chat-messages");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    }
 
+    scrollToBottom();
+
+    const roomId = JSON.parse(document.getElementById('json-chatid').textContent);
+    const userId = JSON.parse(document.getElementById('json-userid').textContent);
+
+    const chatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/'
+        +'chat/'
+        + roomId
+        + '/'
+    );
+
+    chatSocket.onmessage = function (e) {
+        console.log('onmessage');
+
+        const data = JSON.parse(e.data);
+
+        if (data.message) {
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour12: true,
+                hour: 'numeric',
+                minute: '2-digit'
+            };
+            let currentdate = new Date().toLocaleString('en-US', options)
+
+            if (userId == data.user) {
+                document.querySelector('#chat-messages').innerHTML +=
+                    `<div class="chat-message-right pb-4">
+                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                            <div class="text-muted small text-nowrap mt-2">${currentdate}</div>
+                            <p class="text-end mb-0 mt-2"> ${data.message}</p>
+                        </div>
+                    </div>`;
+            } else {
+                document.querySelector('#chat-messages').innerHTML +=
+                    `<div class="chat-message-left pb-4">
+                        <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                            <div class="text-muted small text-nowrap mt-2">${currentdate}</div>
+                            <p class="text-start mb-0 mt-2">${data.message}</p>
+                        </div>
+                    </div>`;
+            };
+        } else {
+            alert('Сообщение пустое!');
+        }
+
+        scrollToBottom();
+    };
+
+
+    chatSocket.onclose = function (e) {
+        console.log('The socket close unexpectadly');
+    }
+
+    document.querySelector('#chat-message-submit').onclick = function(e) {
+        const messageInputDom = document.querySelector('#message-input');
+        const message = messageInputDom.value;
+
+
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'user': userId,
+                'chat': roomId
+            }));
+
+            messageInputDom.value = '';
+        };
+    };
 </script>
 {% endblock %}
