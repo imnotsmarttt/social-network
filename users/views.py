@@ -1,5 +1,4 @@
-import imp
-from django.shortcuts import redirect, render, reverse
+from django.shortcuts import reverse
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import CreateView, FormMixin
 from django.views.generic import DetailView, UpdateView
@@ -11,9 +10,6 @@ from .forms import UserRegisterForm, UserUpdateCustomForm
 from .models import CustomUser
 
 from comments.forms import CommentCreateForm
-from comments.models import CommentModel
-from posts.models import Post
-from contacts.models import Contact
 
 
 class UserRegisterView(CreateView):
@@ -43,27 +39,6 @@ class UserProfileView(DetailView, FormMixin):
         # Checking user_followers
         context['user_followers'] = self.get_object().contact_to.all().values_list('user_from', flat=True)
         return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form):
-        try:
-            reply_id = int(self.request.POST.get('parent_id'))
-        except:
-            reply_id = None
-        comment = form.save(commit=False)
-        comment.user = self.request.user
-        comment.post = Post.objects.get(id=self.request.POST['post_id'])
-        if reply_id:
-            comment.parent = CommentModel.objects.get(id=reply_id)
-        comment.save()
-        return HttpResponseRedirect(reverse('profile', kwargs={'slug': comment.user.slug}))
 
 
 class UserProfileUpdate(LoginRequiredMixin, UpdateView):

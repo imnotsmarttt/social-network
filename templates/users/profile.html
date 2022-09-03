@@ -153,7 +153,6 @@
                         {% with total_likes=post.likes.all.count %}
                         <small class="text-muted m-auto total">Лайки: <span id='total-likes{{ post.id }}'>{{ total_likes }}</span></small>
                         <a href="javascript:void(0)" id="like{{ post.id }}" data-id="{{ post.id }}" data-action="{% if post.id in user_likes %}un{% endif %}like" class="like">
-                            
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                                     <path id='like-icon{{ post.id }}' d="{% if post.id in user_likes %}
                                         M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z
@@ -167,26 +166,27 @@
                     </p>
                 </div>
                 <hr>
-                <form method="post">
+                <form method="post" action="{% url 'comment_post' %}">
                     {% csrf_token %}
                     {{ form }}
                     <input type="hidden" name="post_id" value="{{ post.id }}">
-                    <button type="submit">Ответить</button>
+                    <button class="btn btn-dark btn-sm mt-1" type="submit">Оставить комментарий</button>
                 </form>
+                <hr>
 
-                <ul class="root">
+                <ul class="root mt-3" style="list-style: none;">
                 {% recursetree post.comments.all %}
                     <li>
                         {{ node.content }}
-                        <form method="post">
+                        <form method="post" action="{% url 'comment_post' %}">
                             {% csrf_token %}
                             {{ form }}
                             <input type="hidden" name="post_id" value="{{ post.id }}">
                             <input type="hidden" name="parent_id" value="{{ node.id }}">
-                            <button type="submit">Ответить</button>
+                            <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
                         </form>
                         {% if not node.is_leaf_node %}
-                            <ul class="children">
+                            <ul class="children" style="list-style: none;">
                                 {{ children }}
                             </ul>
                         {% endif %}

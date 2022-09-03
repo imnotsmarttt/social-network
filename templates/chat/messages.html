@@ -52,7 +52,9 @@
 								<img src="{% static compation.avatar.url %}" class="rounded-circle mr-1" alt="..." width="40" height="40">
 							</div>
 							<div class="flex-grow-1 ps-3">
-								<strong>{{ compation.username }}</strong>
+                                <a class="link-wo-underline" href="{% url 'profile' slug=compation.slug %}">
+								    <strong>{{ compation.username }}</strong>
+                                </a>
 <!--								<div class="text-muted small"><em>Typing...</em></div>-->
 							</div>
 						</div>
@@ -134,6 +136,11 @@
 }
 .border-top {
     border-top: 1px solid #dee2e6!important;
+}
+
+.link-wo-underline {
+    text-decoration: none;
+    color: black;
 }
 </style>
     {{ chat.id|json_script:"json-chatid" }}

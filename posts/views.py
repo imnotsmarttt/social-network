@@ -12,6 +12,7 @@ from .models import PostLike, Post
 class PostCreateView(CreateView, LoginRequiredMixin):
     """Create post view"""
     form_class = CreatePostForm
+    model = Post
     template_name = 'posts/create.html'
 
     def form_valid(self, form):
@@ -22,7 +23,7 @@ class PostCreateView(CreateView, LoginRequiredMixin):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('index')
+        return reverse('profile', kwargs={'slug': self.request.user})
 
 
 @login_required

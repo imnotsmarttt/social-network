@@ -12,4 +12,3 @@ class Message(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_messages')
     created = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
-    is_readed = models.BooleanField(default=False)
