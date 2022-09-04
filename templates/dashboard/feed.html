@@ -54,9 +54,10 @@
 
                 <ul class="root mt-3" style="list-style: none;">
                 {% recursetree post.comments.all %}
-                    <li>
-                        {{ node.content }}
-                        <form method="post" action="{% url 'comment_post' %}">
+                    {{ node.user }} <small class="text-muted">{{ node.created }}</small><br>
+                        {{ node.content }}<br>
+                        <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample{{node.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
+                        <form method="post" action="{% url 'comment_post' %}" class="collapse" id="collapseExample{{node.id}}">
                             {% csrf_token %}
                             {{ form }}
                             <input type="hidden" name="post_id" value="{{ post.id }}">
@@ -64,13 +65,14 @@
                             <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
                         </form>
                         {% if not node.is_leaf_node %}
-                            <ul class="children" style="list-style: none;">
+                            <ul class="children mb-2" style="list-style: none;">
                                 {{ children }}
                             </ul>
                         {% endif %}
                     </li>
                 {% endrecursetree %}
             </ul>
+
 
             </div>
         </div>
@@ -113,6 +115,9 @@ $('.like').click(function() {
         }
     });
 })
+
+
+
 </script>
 
 {% endblock %}
