@@ -1,5 +1,5 @@
-from django.shortcuts import reverse
-from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 from .models import CommentModel
 from .forms import CommentCreateForm
@@ -7,17 +7,22 @@ from .forms import CommentCreateForm
 from posts.models import Post
 
 
+@login_required
 def comment_create(request):
-    if request.method == 'POST':
-        form = CommentCreateForm(request.POST)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        print(request.POST.get('post_id'))
         try:
             reply_id = int(request.POST.get('parent_id'))
         except:
             reply_id = None
-        comment = form.save(commit=False)
-        comment.user = request.user
-        comment.post = Post.objects.get(id=request.POST['post_id'])
+        parent = None
+        user = request.user
+        post = Post.objects.get(id=request.POST.get('post_id'))
+        content = request.POST['content']
         if reply_id:
-            comment.parent = CommentModel.objects.get(id=reply_id)
-        comment.save()
-        return HttpResponseRedirect(reverse('profile', kwargs={'slug': comment.user.slug}))
+            parent = CommentModel.objects.get(id=reply_id)
+
+        CommentModel.objects.create(user=user, post=post, parent=parent, content=content)
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'false'})
+

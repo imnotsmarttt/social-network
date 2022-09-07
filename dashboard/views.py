@@ -1,15 +1,12 @@
 from django.views.generic import ListView
-from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from posts.models import Post
-from comments.forms import CommentCreateForm
 
 
-class DashboardFeed(LoginRequiredMixin, ListView, FormMixin):
+class DashboardFeed(LoginRequiredMixin, ListView):
     model = Post
     template_name = 'dashboard/feed.html'
-    form_class = CommentCreateForm
     context_object_name = 'posts'
     
     def get_queryset(self):
@@ -22,3 +19,8 @@ class DashboardFeed(LoginRequiredMixin, ListView, FormMixin):
             # Checking which posts the user has liked
             context['user_likes'] = self.request.user.likes.all().values_list('post', flat=True)
         return context
+
+    def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        context = self.get_context_data()
+        return self.render_to_response(context)

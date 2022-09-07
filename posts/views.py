@@ -1,7 +1,7 @@
-from django.shortcuts import render, reverse
+from django.shortcuts import reverse
 from django.views.generic.edit import CreateView
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -30,11 +30,10 @@ class PostCreateView(CreateView, LoginRequiredMixin):
 def post_like(request):
     post_id = request.POST.get('id')
     action = request.POST.get('action')
-    print(action)
     if post_id and action:
         post = Post.objects.get(id=post_id)
         if action == 'like':
             PostLike.objects.get_or_create(user=request.user, post=post)
         elif action == 'unlike':
             PostLike.objects.get(post=post, user=request.user).delete()
-    return JsonResponse({'status':'ok'})
+    return JsonResponse({'status': 'ok'})

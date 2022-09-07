@@ -44,26 +44,30 @@
                     </p>
                 </div>
                 <hr>
-                <form method="post" action="{% url 'comment_post' %}">
-                    {% csrf_token %}
-                    {{ form }}
-                    <input type="hidden" name="post_id" value="{{ post.id }}">
-                    <button class="btn btn-dark btn-sm mt-1" type="submit">Оставить комментарий</button>
-                </form>
+
+                    <div>
+                        <form class="comment-form" id="comment-form-{{ node.id }}" data-id="{{ post.id }}" data-nodeid="">
+                            <textarea class="form-control form-comment-{{ post.id }}" rows="2" cols="40" placeholder="Комментарий" id="comment-text{{ post.id }}" name="comment_content"></textarea>
+                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                            <button class="btn btn-dark btn-sm mt-1" type="submit">Оставить комментарий</button>
+                        </form>
+                    </div>
                 <hr>
 
-                <ul class="root mt-3" style="list-style: none;">
+                <ul class="root mt-3 comment-node-post{{ post.id }}" style="list-style: none;">
+
                 {% recursetree post.comments.all %}
-                    {{ node.user }} <small class="text-muted">{{ node.created }}</small><br>
+                    <li>
+                        {{ node.user }} <small class="text-muted">{{ node.created }}</small><br>
                         {{ node.content }}<br>
                         <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample{{node.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
-                        <form method="post" action="{% url 'comment_post' %}" class="collapse" id="collapseExample{{node.id}}">
-                            {% csrf_token %}
-                            {{ form }}
-                            <input type="hidden" name="post_id" value="{{ post.id }}">
-                            <input type="hidden" name="parent_id" value="{{ node.id }}">
-                            <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
-                        </form>
+                        <div class="collapse comment-form" id="collapseExample{{node.id}}">
+                            <form class="comment-form" id="comment-form-{{ node.id }}" data-id="{{ post.id }}" data-reply-id="{{ node.id }}">
+                                <textarea class="form-control" rows="2" cols="40" placeholder="Комментарий" id="comment-text{{ post.id }}" name="comment_content"></textarea>
+                                <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
+                            </form>
+                        </div>
+                    </li>
                         {% if not node.is_leaf_node %}
                             <ul class="children mb-2" style="list-style: none;">
                                 {{ children }}
@@ -93,6 +97,58 @@
 
 <script>
 
+$('.comment-form').submit(function(e) {
+    e.preventDefault();
+    data = $(this).serializeArray()
+    var _postid = $(this).attr('data-id');
+    var _comment = $(this).find('.form-control').val();
+    var _nodeid = $(this).attr('data-nodeid');
+    if ($(this).attr('data-reply-id')) {
+        var _parentid = $(this).attr('data-reply-id')
+    } else {
+        var _parentid = null
+    };
+
+
+    $.ajax({
+        type: "POST",
+        url: "{% url 'comment_post' %}",
+        data: {'post_id': _postid, 'content': _comment, 'parent_id': _parentid, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success: function(response) {
+            $('.form-comment-'+_postid).val('');
+
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour12: true,
+                hour: 'numeric',
+                minute: '2-digit'
+            };
+            let currentdate = new Date().toLocaleString('en-US', options)
+            var _html =
+                `<li>
+                    {{ request.user }} <small class="text-muted">${currentdate}</small><br>
+                    ${_comment}<br>
+                    <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
+                    <div class="collapse comment-form" id="collapseExample${_nodeid}">
+                        <form class="comment-form" id="comment-form-{{ node.id }}" data-id="{{ post.id }}" data-reply-id="{{ node.id }}">
+                            <textarea class="form-control" rows="2" cols="40" placeholder="Комментарий" id="comment-text{{ post.id }}" name="comment_content"></textarea>
+                            <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
+                        </form>
+                    </div>
+                </li>
+                `
+
+            $(".comment-node-post"+_postid).prepend(_html);
+
+
+
+
+        }
+    });
+})
+
 $('.like').click(function() {
     var pk = $(this).data('id');
     $.ajax({
@@ -117,7 +173,7 @@ $('.like').click(function() {
 })
 
 
-
 </script>
 
 {% endblock %}
+
