@@ -62,7 +62,7 @@
                         {{ node.content }}<br>
                         <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample{{node.id}}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
                         <div class="collapse" id="collapseExample{{node.id}}">
-                            <form class="comment-form" id="comment-form-{{ node.id }}" data-id="{{ post.id }}" data-parentid="{{ node.id }}" data-nodeid="{{ node.id }}" method="post">
+                            <form class="comment-form" id="comment-form-{{ node.id }}" data-id="{{ post.id }}" data-parentid="{{ node.id }}" data-nodeid="{{ node.id }}">
                                 <textarea class="form-control form-comment-{{ post.id }}" rows="2" cols="40" placeholder="Комментарий" id="comment-text{{ post.id }}" name="comment_content"></textarea>
                                 <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
                             </form>
@@ -97,7 +97,7 @@
 
 <script>
 
-$('.comment-form').submit(function(e) {
+$(document).on('submit', '.comment-form', function (e) {
     e.preventDefault();
 
     var _postid = $(this).attr('data-id');
@@ -126,8 +126,7 @@ $('.comment-form').submit(function(e) {
                 ${_comment}<br>
                 <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample${response['node']}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
                 <div class="collapse" id="collapseExample${response['node']}">
-                    <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}" method="post">
-                        {% csrf_token %}
+                    <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}">
                         <textarea class="form-control form-comment-${response['post']}" rows="2" cols="40" placeholder="Комментарий" id="comment-text${response['post']}" name="comment_content"></textarea>
                         <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
                     </form>
@@ -143,8 +142,7 @@ $('.comment-form').submit(function(e) {
                         ${_comment}<br>
                         <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample${response['node']}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
                         <div class="collapse" id="collapseExample${response['node']}">
-                            <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['node']}" data-parentid="${response['node']}" data-nodeid="${response['node']}" method="post">
-                                {% csrf_token %}
+                            <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}">
                                 <textarea class="form-control form-comment-${response['post']}" rows="2" cols="40" placeholder="Комментарий" id="comment-text${response['post']}" name="comment_content"></textarea>
                                 <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
                             </form>
@@ -155,9 +153,6 @@ $('.comment-form').submit(function(e) {
             } else {
                 $(".comment-node-post"+_postid).prepend(_html);
             }
-
-
-
             $('.form-comment-'+_postid).val('');
         }
     });

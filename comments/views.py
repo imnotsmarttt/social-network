@@ -23,7 +23,6 @@ def comment_create(request):
 
         CommentModel.objects.create(user=user, post=post, parent=parent, content=content)
         node = CommentModel.objects.order_by('id').last().id
-        print(node)
         return JsonResponse({'status': 'ok', 'node': node, 'post': post.id})
     return JsonResponse({'status': 'false'})
 
