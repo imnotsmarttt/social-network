@@ -10,7 +10,6 @@ from posts.models import Post
 @login_required
 def comment_create(request):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        print(request.POST.get('post_id'))
         try:
             reply_id = int(request.POST.get('parent_id'))
         except:
@@ -23,6 +22,8 @@ def comment_create(request):
             parent = CommentModel.objects.get(id=reply_id)
 
         CommentModel.objects.create(user=user, post=post, parent=parent, content=content)
-        return JsonResponse({'status': 'ok'})
+        node = CommentModel.objects.order_by('id').last().id
+        print(node)
+        return JsonResponse({'status': 'ok', 'node': node, 'post': post.id})
     return JsonResponse({'status': 'false'})
 
