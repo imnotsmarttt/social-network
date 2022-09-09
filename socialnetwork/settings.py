@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'contacts.apps.ContactsConfig',
     'dashboard.apps.DashboardConfig',
     'chat.apps.ChatConfig',
+    'search.apps.SearchConfig',
 ]
 
 MIDDLEWARE = [

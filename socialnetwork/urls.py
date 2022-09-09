@@ -29,4 +29,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('contact/', include('contacts.urls')),
     path('chat/', include('chat.urls')),
+    path('search/', include('search.urls')),
 ]
