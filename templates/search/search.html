@@ -5,10 +5,55 @@
 
 {% block body %}
 
-{% for u in users %}
-    
-    {{ u }}
 
-{% endfor %}
+{% load static %}
+{% load check_contact %}
+<div class="container">
 
+    <div class="d-flex mt-3">
+        <div class="w-25">
+
+            <h4>Фильтр поиска</h4>
+
+        </div>
+        <div class="w-75 bg-light p-3">
+            <h4>Найдено людей: {{ users.count }}</h4>
+
+                {{ user_followers }}
+                {% for u in users %}
+
+                        <div class="p-2 mt-3 border d-flex">
+                            <a href="{% url 'profile' slug=u.slug %}" class="text-decoration-none text-dark">
+                                <img src="{% static u.avatar.url %}" width="100px" height="100px">
+                            </a>
+                            <div class="user-info ms-5">
+                                <h5>{{ u.first_name }} {{ u.last_name }}</h5>
+                                <h6>{{ u.country }}, {{ u.city }}</h6>
+                                <p>Подписчиков: {{ u.contact_to.all.count }}</p>
+                            </div>
+
+                            {% check_contact request.user u as check_c %}
+                            {{ check_c }}
+                            <div class="btns">
+                                {% if not request.user == u %}
+                                    <button id="add-contact-btn"
+                                        class="btn btn-dark"
+                                        data-action="{% if check_c %}un{% endif %}follow"
+                                        data-id="{{ user.id }}">
+                                        {% if check_c %}Отписаться{% else %}Подписаться{% endif %}
+                                    </button>
+                                    <a href="{% url 'chat_create' user_id=u.id %}" class="btn btn-outline-dark">Сообщение</a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </a>
+                {% endfor %}
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
 {% endblock %}
