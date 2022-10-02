@@ -227,114 +227,117 @@
 
 <script>
 
-$('.comment-form').submit(function(e) {
-    e.preventDefault();
+$(document).ready(function () {
+    $('.comment-form').submit(function(e) {
+        e.preventDefault();
 
-    var _postid = $(this).attr('data-id');
-    var _comment = $(this).find('.form-control').val();
-    var _nodeid = $(this).attr('data-nodeid');
-    var _parentid = $(this).attr('data-parentid')
+        var _postid = $(this).attr('data-id');
+        var _comment = $(this).find('.form-control').val();
+        var _nodeid = $(this).attr('data-nodeid');
+        var _parentid = $(this).attr('data-parentid')
 
-    $.ajax({
-        type: "POST",
-        url: "{% url 'comment_post' %}",
-        data: {'post_id': _postid, 'content': _comment, 'parent_id': _parentid, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-        success: function(response) {
+        $.ajax({
+            type: "POST",
+            url: "{% url 'comment_post' %}",
+            data: {'post_id': _postid, 'content': _comment, 'parent_id': _parentid, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            success: function(response) {
 
-            const options = {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour12: true,
-                hour: 'numeric',
-                minute: '2-digit'
-            };
-            let currentdate = new Date().toLocaleString('en-US', options)
-            var _html =`
-            <li id="${response['node']}">
-                {{ request.user }} <small class="text-muted">${currentdate}</small><br>
-                ${_comment}<br>
-                <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample${response['node']}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
-                <div class="collapse" id="collapseExample${response['node']}">
-                    <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}">
-                        <textarea class="form-control form-comment-${response['post']}" rows="2" cols="40" placeholder="Комментарий" id="comment-text${response['post']}" name="comment_content"></textarea>
-                        <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
-                    </form>
-                </div>
-            </li>
-                `
+                const options = {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour12: true,
+                    hour: 'numeric',
+                    minute: '2-digit'
+                };
+                let currentdate = new Date().toLocaleString('en-US', options)
+                var _html =`
+                <li id="${response['node']}">
+                    {{ request.user }} <small class="text-muted">${currentdate}</small><br>
+                    ${_comment}<br>
+                    <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample${response['node']}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
+                    <div class="collapse" id="collapseExample${response['node']}">
+                        <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}">
+                            <textarea class="form-control form-comment-${response['post']}" rows="2" cols="40" placeholder="Комментарий" id="comment-text${response['post']}" name="comment_content"></textarea>
+                            <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
+                        </form>
+                    </div>
+                </li>
+                    `
 
-            if (_nodeid) {
-                $(`
-                <ul class="children mb-2" style="list-style: none;">
-                    <li id="${response['node']}">
-                        {{ request.user }} <small class="text-muted">${currentdate}</small><br>
-                        ${_comment}<br>
-                        <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample${response['node']}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
-                        <div class="collapse" id="collapseExample${response['node']}">
-                            <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}">
-                                <textarea class="form-control form-comment-${response['post']}" rows="2" cols="40" placeholder="Комментарий" id="comment-text${response['post']}" name="comment_content"></textarea>
-                                <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
-                            </form>
-                        </div>
-                    </li>
-                </ul>
-            `).insertAfter(`#${_nodeid}`);
-            } else {
-                $(".comment-node-post"+_postid).prepend(_html);
+                if (_nodeid) {
+                    $(`
+                    <ul class="children mb-2" style="list-style: none;">
+                        <li id="${response['node']}">
+                            {{ request.user }} <small class="text-muted">${currentdate}</small><br>
+                            ${_comment}<br>
+                            <a class="text-decoration-none" data-bs-toggle="collapse" href="#collapseExample${response['node']}" role="button" aria-expanded="false" aria-controls="collapseExample">Ответить</a> <br>
+                            <div class="collapse" id="collapseExample${response['node']}">
+                                <form class="comment-form" id="comment-form-${response['node']}" data-id="${response['post']}" data-parentid="${response['node']}" data-nodeid="${response['node']}">
+                                    <textarea class="form-control form-comment-${response['post']}" rows="2" cols="40" placeholder="Комментарий" id="comment-text${response['post']}" name="comment_content"></textarea>
+                                    <button class="btn btn-dark btn-sm mt-1" type="submit">Ответить</button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                `).insertAfter(`#${_nodeid}`);
+                } else {
+                    $(".comment-node-post"+_postid).prepend(_html);
+                }
+                $('.form-comment-'+_postid).val('');
             }
-            $('.form-comment-'+_postid).val('');
-        }
-    });
-})
+        });
+    })
 
 
-$('.like').click(function() {
-    var pk = $(this).data('id');
-    $.ajax({
-        type: "POST",
-        url: "{% url 'post_like' %}",
-        data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-        success: function(response) {
-            var previous_action = $('#like'+pk).data('action')
-            
-            $('#like'+pk).data('action', previous_action == "like" ? "unlike": 'like');
+    $('.like').click(function() {
+        var pk = $(this).data('id');
+        $.ajax({
+            type: "POST",
+            url: "{% url 'post_like' %}",
+            data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            success: function(response) {
+                var previous_action = $('#like'+pk).data('action')
 
-            var previous_likes = parseInt($('#total-likes'+pk).text());
+                $('#like'+pk).data('action', previous_action == "like" ? "unlike": 'like');
 
-            $('#like-icon'+pk).attr(
-                "d", previous_action == 'like' ? "M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z" : "m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z")
+                var previous_likes = parseInt($('#total-likes'+pk).text());
 
-            $('#total-likes'+pk).text(
-                previous_action == 'like' ? previous_likes + 1 : previous_likes - 1
-            );
-        }
-    });
-})
+                $('#like-icon'+pk).attr(
+                    "d", previous_action == 'like' ? "M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z" : "m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z")
+
+                $('#total-likes'+pk).text(
+                    previous_action == 'like' ? previous_likes + 1 : previous_likes - 1
+                );
+            }
+        });
+    })
 
 
-$('#add-contact-btn').click(function() {
+    $('#add-contact-btn').click(function() {
 
-    $.ajax({
-        type: "POST",
-        url: "{% url 'follow_to_user' %}",
-        data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-        success: function(response) {
-            var previous_action = $('#add-contact-btn').data('action')
-            
-            $('#add-contact-btn').data('action', previous_action == "follow" ? "unfollow": 'follow');
+        $.ajax({
+            type: "POST",
+            url: "{% url 'follow_to_user' %}",
+            data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            success: function(response) {
+                var previous_action = $('#add-contact-btn').data('action')
 
-            var previous_likes = parseInt($('#followers').text());
+                $('#add-contact-btn').data('action', previous_action == "follow" ? "unfollow": 'follow');
 
-            $('#add-contact-btn').text(
-                previous_action == 'follow' ? "Отписаться" : "Подписаться");
+                var previous_followers = parseInt($('#followers').text());
 
-            $('#followers').text(
-                previous_action == 'follow' ? previous_likes + 1 : previous_likes - 1
-            );
-        }
-    });
-})
+                $('#add-contact-btn').text(
+                    previous_action == 'follow' ? "Отписаться" : "Подписаться");
+
+                $('#followers').text(
+                    previous_action == 'follow' ? previous_followers + 1 : previous_followers - 1
+                );
+            }
+        });
+    })
+});
+
 </script>
 
 {% endblock %}

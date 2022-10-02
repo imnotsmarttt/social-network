@@ -29,17 +29,16 @@
                             <div class="user-info ms-5">
                                 <h5>{{ u.first_name }} {{ u.last_name }}</h5>
                                 <h6>{{ u.country }}, {{ u.city }}</h6>
-                                <p>Подписчиков: {{ u.contact_to.all.count }}</p>
+                                <p>Подписчиков: <span id="followers{{ u.id }}">{{ u.contact_to.all.count }}</span></p>
                             </div>
 
                             {% check_contact request.user u as check_c %}
-                            {{ check_c }}
                             <div class="btns">
                                 {% if not request.user == u %}
                                     <button id="add-contact-btn"
                                         class="btn btn-dark"
                                         data-action="{% if check_c %}un{% endif %}follow"
-                                        data-id="{{ user.id }}">
+                                        data-id="{{ u.id }}">
                                         {% if check_c %}Отписаться{% else %}Подписаться{% endif %}
                                     </button>
                                     <a href="{% url 'chat_create' user_id=u.id %}" class="btn btn-outline-dark">Сообщение</a>
@@ -56,4 +55,43 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block javascript %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script>
+
+$(document).ready(function () {
+    $('#add-contact-btn').click(function() {
+        var id = $(this).data('id');
+
+        $.ajax({
+            type: "POST",
+            url: "{% url 'follow_to_user' %}",
+            data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            success: function(response) {
+                var previous_action = $('#add-contact-btn').data('action')
+
+                $('#add-contact-btn').data('action', previous_action == "follow" ? "unfollow": 'follow');
+
+                var previous_followers = parseInt($('#followers'+id).text());
+
+                $('#add-contact-btn').text(
+                    previous_action == 'follow' ? "Отписаться" : "Подписаться");
+
+                $('#followers'+id).text(
+                    previous_action == 'follow' ? previous_followers + 1 : previous_followers - 1
+                );
+            }
+        });
+    })
+});
+
+
+</script>
+
 {% endblock %}
