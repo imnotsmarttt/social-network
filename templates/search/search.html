@@ -35,8 +35,8 @@
                             {% check_contact request.user u as check_c %}
                             <div class="btns">
                                 {% if not request.user == u %}
-                                    <button id="add-contact-btn"
-                                        class="btn btn-dark"
+                                    <button id="add-contact-btn{{ u.id }}"
+                                        class="add-contact-btn btn btn-dark"
                                         data-action="{% if check_c %}un{% endif %}follow"
                                         data-id="{{ u.id }}">
                                         {% if check_c %}Отписаться{% else %}Подписаться{% endif %}
@@ -66,7 +66,7 @@
 <script>
 
 $(document).ready(function () {
-    $('#add-contact-btn').click(function() {
+    $('.add-contact-btn').click(function() {
         var id = $(this).data('id');
 
         $.ajax({
@@ -74,13 +74,14 @@ $(document).ready(function () {
             url: "{% url 'follow_to_user' %}",
             data: {'id': $(this).data('id'), action: $(this).data('action'), 'csrfmiddlewaretoken': '{{ csrf_token }}'},
             success: function(response) {
-                var previous_action = $('#add-contact-btn').data('action')
+                var previous_action = $('#add-contact-btn'+id).data('action')
 
-                $('#add-contact-btn').data('action', previous_action == "follow" ? "unfollow": 'follow');
+
+                $('#add-contact-btn'+id).data('action', previous_action == "follow" ? "unfollow": 'follow');
 
                 var previous_followers = parseInt($('#followers'+id).text());
 
-                $('#add-contact-btn').text(
+                $('#add-contact-btn'+id).text(
                     previous_action == 'follow' ? "Отписаться" : "Подписаться");
 
                 $('#followers'+id).text(

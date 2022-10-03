@@ -6,10 +6,19 @@ from asgiref.sync import sync_to_async
 from .models import Message, Chat
 from users.models import CustomUser
 
+
+@sync_to_async
+def unread_to_read(chat, user):
+    messages = Message.objects.filter(chat=chat).exclude(author=user).update(is_read=True)
+    return messages
+
+
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_id = self.scope['url_route']['kwargs']['chat_id']
         self.room_group_id = 'chat_%s' % self.room_id
+
+        await unread_to_read(chat=self.room_id, user=self.scope['user'].id)
 
         await self.channel_layer.group_add(
             self.room_group_id,
