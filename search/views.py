@@ -20,7 +20,7 @@ class SearchUsers(ListView):
     context_object_name = 'users'
 
     def get_queryset(self):
-        qs = CustomUser.objects.all()
+        qs = CustomUser.objects.exclude(slug=self.request.user.slug)
         search_input = self.request.GET.get('search-input')
 
         if is_valid_queryset_param_stroke(search_input):
@@ -37,8 +37,3 @@ class SearchUsers(ListView):
 
         return qs
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['country_filter'] = self.get_queryset().values_list('country', flat=False)
-        context['usrs'] = [u for u in self.get_queryset()]
-        return context
