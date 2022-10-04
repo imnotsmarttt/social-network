@@ -1,6 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm, PasswordChangeForm
 
+from django_countries.fields import CountryField
+from django_countries.widgets import CountrySelectWidget
+
 from .models import CustomUser
 
 
@@ -22,15 +25,16 @@ class UserRegisterForm(UserCreationForm):
         help_text=None,
     )
 
+    country = CountryField()
+
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'password1', 'password2', 'email', 'city', 'country']
+        fields = ['first_name', 'last_name', 'username', 'password1', 'password2', 'email', 'country']
         labels = {
             'first_name': 'Имя',
             'last_name': 'Фамилия',
             'username': 'Логин',
             'email': 'Email',
-            'city': 'Город',
             'country': 'Страна',
         }
 
@@ -47,11 +51,8 @@ class UserRegisterForm(UserCreationForm):
             'email': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'floatingInput'
             }),
-            'country': forms.TextInput(attrs={
-                'class': 'form-control', 'id': 'floatingInput'
-            }),
-            'city': forms.TextInput(attrs={
-                'class': 'form-control', 'id': 'floatingInput'
+            'country': CountrySelectWidget(attrs={
+                'class': 'form-select form-select-sm', 'aria-label': '.form-select-sm example'
             }),
         }
 
@@ -69,23 +70,18 @@ class UserLoginForm(AuthenticationForm):
             'class': 'form-control', 'id': 'floatingPassword'}),
     )
 
-    # def __init__(self, *args, **kwargs):
-    #     self.request = kwargs.pop('request', None)
-    #     super(UserLoginForm, self).__init__(*args, **kwargs)
-
 
 class UserUpdateCustomForm(UserChangeForm):
     password = None
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'city', 'country', 'phone', 'about_me', 'avatar']
+        fields = ['first_name', 'last_name', 'username', 'email', 'country', 'phone', 'about_me', 'avatar']
         labels = {
             'first_name': 'Имя',
             'last_name': 'Фамилия',
             'username': 'Логин',
             'email': 'Email',
-            'city': 'Город',
             'country': 'Страна',
             'about_me': 'Про себя',
             'phone': 'Номер телефона',
@@ -105,11 +101,8 @@ class UserUpdateCustomForm(UserChangeForm):
             'email': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'floatingInput'
             }),
-            'country': forms.TextInput(attrs={
-                'class': 'form-control', 'id': 'floatingInput'
-            }),
-            'city': forms.TextInput(attrs={
-                'class': 'form-control', 'id': 'floatingInput'
+            'country': CountrySelectWidget(attrs={
+                'class': 'form-select form-select-sm', 'aria-label': '.form-select-sm example'
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control', 'id': 'floatingInput'

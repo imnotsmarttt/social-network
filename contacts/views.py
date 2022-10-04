@@ -14,10 +14,8 @@ def add_contact(request):
     if action and user_to:
         user = CustomUser.objects.get(id=user_to)
         if action == 'follow':
-            print(1)
             Contact.objects.get_or_create(user_from=request.user, user_to=user)
         else:
-            print(2)
             Contact.objects.filter(user_from=request.user, user_to=user).delete()
 
     return JsonResponse({'status':'ok'})

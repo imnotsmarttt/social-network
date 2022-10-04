@@ -37,5 +37,8 @@ class UserProfileUpdate(LoginRequiredMixin, UpdateView):
     form_class = UserUpdateCustomForm
     model = CustomUser
 
+    def get_initial(self):
+        return {'country': self.request.user.country}
+
     def get_success_url(self):
         return reverse('profile', kwargs={'slug': self.request.user.slug})

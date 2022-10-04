@@ -23,7 +23,7 @@
                         <div class="mt-3">
                         <h4>{{ user.first_name }} {{ user.last_name }}</h4>
                         <p id="followers" class="text-secondary mb-1">{{ user.contact_to.all.count }}</p>
-                        <p class="text-muted font-size-sm">{{ user.country }}, {{ user.city }}</p>
+                        <p class="text-muted font-size-sm">{{ user.country.name }}</p>
 
                         {% if not request.user == user %}
                             {% check_contact request.user user as cc %}
@@ -108,10 +108,10 @@
                 <hr>
                 <div class="row">
                     <div class="col-sm-3">
-                        <h6 class="mb-0">Страна, Город</h6>
+                        <h6 class="mb-0">Страна</h6>
                     </div>
                     <div class="col-sm-9 text-secondary">
-                        {{ user.country }}, {{ user.city }}
+                        {{ user.country.name }}
                     </div>
                 </div>
 

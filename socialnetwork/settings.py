@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'mptt',
     'channels',
+    'django_countries',
 
     'posts.apps.PostsConfig',
     'users.apps.UsersConfig',

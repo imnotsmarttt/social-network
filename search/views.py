@@ -20,7 +20,9 @@ class SearchUsers(ListView):
     context_object_name = 'users'
 
     def get_queryset(self):
-        qs = CustomUser.objects.exclude(slug=self.request.user.slug)
+        qs = CustomUser.objects.all()
+        if self.request.user.is_authenticated:
+            qs = qs.exclude(slug=self.request.user.slug)
         search_input = self.request.GET.get('search-input')
 
         if is_valid_queryset_param_stroke(search_input):
